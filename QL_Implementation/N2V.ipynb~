@@ -1,0 +1,124 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "outputs": [],
+   "source": [
+    "# Imports necessary to execute the code\n",
+    "import torch\n",
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "from careamics import CAREamist\n",
+    "from careamics.config import create_n2v_configuration\n",
+    "from careamics.utils.metrics import scale_invariant_psnr\n",
+    "from careamics_portfolio import PortfolioManager\n",
+    "from PIL import Image\n",
+    "import matplotlib.pyplot as plt\n",
+    "from aicsimageio import AICSImage"
+   ],
+   "metadata": {
+    "collapsed": false,
+    "ExecuteTime": {
+     "end_time": "2025-11-27T11:20:27.650838900Z",
+     "start_time": "2025-11-27T11:19:56.568700300Z"
+    }
+   },
+   "id": "fdd48f5efcfb1c4d"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Using GPU: yes\n"
+     ]
+    }
+   ],
+   "source": [
+    "use_gpu  = \"yes\" if len([torch.cuda.get_device_properties(i) for i in range(torch.cuda.device_count())]) > 0 else \"no\"\n",
+    "print(f\"Using GPU: {use_gpu}\")"
+   ],
+   "metadata": {
+    "collapsed": false,
+    "ExecuteTime": {
+     "end_time": "2025-11-27T11:20:29.579141800Z",
+     "start_time": "2025-11-27T11:20:27.645226500Z"
+    }
+   },
+   "id": "e2c1348d42f73739"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "img = AICSImage(\"A:/SMLM数据集/noise_200Hz_2400frames_pxlsize30nm_3.90dBSNR_24000x328x328.tif\")\n",
+    "data = img.get_image_data(\"TCZYX\")\n",
+    "print(data.shape)"
+   ],
+   "metadata": {
+    "collapsed": false,
+    "is_executing": true,
+    "ExecuteTime": {
+     "start_time": "2025-11-27T11:20:30.451960100Z"
+    }
+   },
+   "id": "25b44125c6623f33"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "# 提取某一帧\n",
+    "frame = img.get_image_data(\"YX\", T=0, C=0, Z=0)\n",
+    "# 显示\n",
+    "plt.imshow(frame, cmap='gray')\n",
+    "plt.title(\"Frame: T=0, C=0, Z=0\")\n",
+    "plt.axis(\"off\")\n",
+    "plt.show()\n"
+   ],
+   "metadata": {
+    "collapsed": false,
+    "is_executing": true
+   },
+   "id": "d779daa9b4810e69"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "outputs": [],
+   "source": [],
+   "metadata": {
+    "collapsed": false,
+    "is_executing": true
+   },
+   "id": "51633ac8ca7cd5a"
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
