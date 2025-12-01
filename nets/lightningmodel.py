@@ -234,7 +234,7 @@ class VAELightning(pl.LightningModule):
         
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',patience=30,factor=0.5,min_lr=1e-12,verbose=True)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',patience=30,factor=0.5,min_lr=1e-12)
         return {
            'optimizer': optimizer,
            'lr_scheduler': scheduler, # Changed scheduler to lr_scheduler

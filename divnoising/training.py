@@ -34,15 +34,32 @@ def create_model_and_train(basedir,data_mean,data_std,gaussian_noise_std,
                                       kl_annealing = kl_annealing)
         
     if torch.cuda.is_available():
-        trainer = pl.Trainer(gpus=1, max_epochs=max_epochs, logger=logger,
-                             callbacks=
-                             [EarlyStopping(monitor='val_loss', min_delta=1e-6, 
-                              patience = 100, verbose = True, mode='min'),checkpoint_callback], weights_summary=weights_summary)
+        # trainer = pl.Trainer(gpus=1, max_epochs=max_epochs, logger=logger,
+        #                      callbacks=
+        #                      [EarlyStopping(monitor='val_loss', min_delta=1e-6,
+        #                       patience = 100, verbose = True, mode='min'),checkpoint_callback], weights_summary=weights_summary)
+        trainer = pl.Trainer(
+            accelerator="gpu",  # 指定使用 GPU
+            devices=1,  # 使用 1 个 GPU
+            max_epochs=max_epochs,
+            logger=logger,
+            callbacks=[
+                EarlyStopping(
+                    monitor='val_loss',
+                    min_delta=1e-6,
+                    patience=100,
+                    verbose=True,
+                    mode='min'
+                ),
+                checkpoint_callback
+            ],
+            enable_model_summary=True  # weights_summary 被弃用，改用 enable_model_summary
+        )
     else:
         trainer = pl.Trainer(max_epochs=max_epochs, logger=logger,
                              callbacks=
                              [EarlyStopping(monitor='val_loss', min_delta=1e-6, 
-                              patience = 100, verbose = True, mode='min'),checkpoint_callback], weights_summary=weights_summary)
+                              patience = 100,  mode='min'),checkpoint_callback], weights_summary=weights_summary)
     trainer.fit(vae, train_loader, val_loader)
     collapse_flag = vae.collapse
     return collapse_flag
@@ -66,7 +83,9 @@ def train_network(x_train_tensor, x_val_tensor, batch_size, data_mean, data_std,
     logger = TensorBoardLogger(basedir, name= "", version="", default_hp_metric=False)
     weights_summary="top" if log_info else None
     if not log_info:
-        pl.utilities.distributed.log.setLevel(logging.ERROR)
+        # pl.utilities.distributed.log.setLevel(logging.ERROR)
+        logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
+
     posterior_collapse_count = 0
     
     while collapse_flag and posterior_collapse_count<20:
